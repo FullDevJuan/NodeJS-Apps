@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My app with NodeJS</title>
+    <style>
+      body,
+      * {
+        font-family: "Courier New", Courier, monospace;
+      }
+      .path {
+        background-color: #222;
+        color: #fff;
+        font-size: 1rem;
+        border-radius: 8px;
+        padding: 2px;
+      }
+      .editor {
+        background: #282c34;
+        color: #d4d4d4;
+        padding: 16px;
+        border-radius: 8px;
+        font-family: "Fira Mono", "Courier New", monospace;
+        font-size: 1rem;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome to my first app with NodeJS</h1>
+    <p>The server is listening now!...</p>
+    <h2>API</h2>
+
+    <h3>GET <span class="path">/api/user</span></h3>
+    <pre class="editor">
+    <code class="code">
+
+    </code>
+</pre>
+
+    <h3>POST <span class="path">/api/add/user</span></h3>
+    <form id="form">
+      <input type="text" placeholder="nombre" id="input-nombre" />
+      <input type="number" placeholder="edad" id="input-edad" />
+      <input type="text" placeholder="dev" id="input-dev" />
+      <input type="submit" id="input-submit" />
+    </form>
+
+    <script>
+      const code = document.querySelector(".code");
+      const inputNombre = document.getElementById("input-nombre");
+      const inputEdad = document.getElementById("input-edad");
+      const inputDev = document.getElementById("input-dev");
+      const inputSubmit = document.getElementById("input-submit");
+      const form = document.getElementById("form");
+
+      function getUsers() {
+        fetch("http://127.0.0.1:8080/api/user")
+          .then((res) => res.json())
+          .then((data) => {
+            code.textContent = JSON.stringify(data);
+          });
+      }
+      getUsers();
+
+      form.addEventListener("submit", (e) => {
+        let valid = true;
+
+        let requiredInputs = [
+          inputNombre.value.trim(),
+          inputEdad.value.trim(),
+          inputDev.value.trim(),
+        ];
+
+        requiredInputs.forEach((value) => {
+          if (!value) valid = false;
+        });
+
+        if (!valid) {
+          alert("Completa todos los campos");
+        } else {
+          fetch("http://127.0.0.1:8080/api/add/user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              nombre: inputNombre.value.trim(),
+              edad: inputEdad.value.trim(),
+              dev: inputDev.value.trim(),
+            }),
+          })
+            .then((res) => {
+              if (!res.ok)
+                throw new Error(
+                  "HTTP Error! status: " + res.status + " " + res.statusText
+                );
+
+              return res.json();
+            })
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+
+          form.reset();
+        }
+        e.preventDefault();
+      });
+    </script>
+  </body>
+</html>
