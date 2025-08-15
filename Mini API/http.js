@@ -42,7 +42,7 @@ async function GET(req, res) {
       }
       break;
 
-    case "/api/user":
+    case "/api/users":
       dataResponse = await fs.readFile("../../files/info2.txt");
       res
         .writeHead(200, { "content-type": "application/json" })
